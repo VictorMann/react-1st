@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primeiros passos com react</title>
+</head>
+<body>
+    <div id="app">
+        <!-- minha aplicação é renderizada aqui -->
+    </div>
+    <script src="assets/libs/react/build/react.js"></script>
+    <script src="assets/libs/react/build/react-dom.js"></script>
+    <script>
+        ReactDOM.render(
+            React.DOM.h1(null, "Hello world"),
+            document.getElementById('app')
+        );
+    </script>
+</body>
+</html>
