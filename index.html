@@ -12,10 +12,34 @@
     <script src="assets/libs/react/build/react.js"></script>
     <script src="assets/libs/react/build/react-dom.js"></script>
     <script>
+        // ReactDOM.render(
+        //     React.DOM.h1(
+        //         {id: "my-header"}, 
+        //         "Hello world",
+        //         React.DOM.small({
+        //             style: {
+        //                 color: 'red'
+        //             }}, 
+        //             ' - sub titulo'
+        //         )
+        //     ),
+        //     document.getElementById('app')
+        // );
+
+        /**
+         *  Criando componentes personalizados 
+         * 
+         */ 
+        var component = React.createClass({
+            render: function() {
+                return React.DOM.h1(null, 'Meu componente personalizado');
+            }
+        });
         ReactDOM.render(
-            React.DOM.h1(null, "Hello world"),
+            React.createElement(component),
             document.getElementById('app')
         );
+        
     </script>
 </body>
 </html>
