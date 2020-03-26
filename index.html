@@ -183,18 +183,23 @@
          */
         var Counter = React.createClass({
             name: 'Counter',
-            mixins: [logMixin],
+            // mixins: [logMixin],
             propTypes: {
                 count: React.PropTypes.number.isRequired
             },
+            // evitando atualizações de componentes
+            shouldComponentUpdate: function(nextProps, nextState) {
+                return this.props.count !== nextProps.count;
+            },
             render: function() {
+                console.log(`${this.name}::render()`);
                 return React.DOM.span(null, this.props.count);
             }
         });
 
         var textAreaCounter = React.createClass({
-            name: 'textAreaCounter',
-            mixins: [logMixin],
+            name: 'TextAreaCounter',
+            // mixins: [logMixin],
             propTypes: {
                 defaultValue: React.PropTypes.string
             },
@@ -209,7 +214,7 @@
                 });
             },
             componentDidUpdate: function(oldProps, oldState) {
-                this._log('componentDidUpdate', arguments);
+                // this._log('componentDidUpdate', arguments);
 
                 // validação
                 if (this.state.text.length > 3) {
@@ -217,6 +222,9 @@
                 }
             },
             render: function() {
+
+                console.log(`${this.name}::render()`);
+
                 let counter = null;
 
                 if (this.state.text.length > 0) {
