@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Primeiros passos com react</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            border: 1px solid #555;
+        }
+        table thead {
+            background: #333;
+            color: white;
+        }
+        table th,
+        table td {
+            padding: .3em .5em;
+        }
+        table tbody tr:nth-child(odd) {
+            background: #EEE;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -287,10 +304,21 @@
                     data: this.props.initialData
                 }
             },
+            _sort(ev) {
+                let column = ev.target.cellIndex;
+                let data = this.state.data.slice();
+                
+                data.sort((a,b) => {
+                    if (a[column] == b[column]) return 0;
+                    return a[column] > b[column] ? 1 : -1
+                });
+                
+                this.setState({data: data});
+            },
             render: function() {
                 return (
-                    React.DOM.table({border: '1', align: 'center'},
-                        React.DOM.thead(null,
+                    React.DOM.table(null,
+                        React.DOM.thead({onClick: this._sort},
                             React.DOM.tr(null,
                                 this.props.headers.map((title, idx) =>
                                     React.DOM.th({key: idx}, title)
