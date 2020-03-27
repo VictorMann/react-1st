@@ -303,7 +303,8 @@
                 return {
                     data: this.props.initialData,
                     sortby: null,
-                    descending: false
+                    descending: false,
+                    edit: null // {row: index, cell: index}
                 }
             },
             _sort(ev) {
@@ -324,6 +325,27 @@
                     descending: descending
                 });
             },
+            _showEditor: function(ev) {
+                this.setState({
+                    edit: {
+                        row: parseInt(ev.target.dataset.row, 10),
+                        cell: ev.target.cellIndex
+                    }
+                });
+            },
+            _save: function(ev) {
+                ev.preventDefault();
+
+                let input = ev.target.firstElementChild;
+                let data = this.state.data.slice();
+                let row = this.state.edit.row, cell = this.state.edit.cell;
+                data[row][cell] = input.value;
+
+                this.setState({
+                    edit: null, // edição finalizada
+                    data: data
+                });
+            },
             render: function() {
                 return (
                     React.DOM.table(null,
@@ -339,12 +361,29 @@
                                 })
                             )
                         ),
-                        React.DOM.tbody(null,
-                            this.state.data.map((row, idx) => 
-                                React.DOM.tr({key: idx},
-                                    row.map((cell, idx) =>
-                                        React.DOM.td({key: idx}, cell)
-                                    )
+                        React.DOM.tbody({onDoubleClick: this._showEditor},
+                            this.state.data.map((row, rowidx) => 
+                                React.DOM.tr({key: rowidx},
+                                    row.map((cell, idx) => {
+
+                                        let content = cell;
+                                        let edit = this.state.edit;
+
+                                        if (edit && edit.row == rowidx && edit.cell == idx) {
+                                            content = React.DOM.form({onSubmit: this._save},
+                                                React.DOM.input({
+                                                    type: 'text',
+                                                    defaultValue: content
+                                                })
+                                            );
+                                        }
+
+
+                                        return React.DOM.td({
+                                            key: idx,
+                                            'data-row': rowidx
+                                        }, content);
+                                    })
                                 )
                             )
                         )
