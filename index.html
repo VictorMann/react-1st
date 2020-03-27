@@ -20,6 +20,9 @@
         table tbody tr:nth-child(odd) {
             background: #EEE;
         }
+        .toolbar {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -289,6 +292,7 @@
 
         var Excel = React.createClass({
             displayName: 'Excel', // apenas para depuração, verifique ao remover key do th
+            _preSearchData: null,
             propTypes: {
                 headers: React.PropTypes.arrayOf(
                     React.PropTypes.string
@@ -304,7 +308,8 @@
                     data: this.props.initialData,
                     sortby: null,
                     descending: false,
-                    edit: null // {row: index, cell: index}
+                    edit: null, // {row: index, cell: index}
+                    search: false
                 }
             },
             _sort(ev) {
@@ -346,7 +351,38 @@
                     data: data
                 });
             },
-            render: function() {
+            _toggleSearch: function(ev) {
+                if (this.state.search) {
+                    this.setState({
+                        data: this._preSearchData,
+                        search: false
+                    });
+                } else {
+                    this._preSearchData = this.state.data;
+                    this.setState({
+                        search: true
+                    });
+                }
+            },
+            _search: function(ev) {
+                let needle = ev.target.value.toLowerCase();
+                if (!needle) {
+                    this.setState({
+                        data: this._preSearchData
+                    });
+                    return;
+                }
+
+                let idx = ev.target.dataset.idx; // coluna a ser pesquisada
+                let searchData = this._preSearchData.filter(row => {
+                    return row[idx].toString().toLowerCase().indexOf(needle) > -1;
+                });
+
+                this.setState({
+                    data: searchData
+                });
+            },
+            _renderTable() {
                 return (
                     React.DOM.table(null,
                         React.DOM.thead({onClick: this._sort},
@@ -362,6 +398,7 @@
                             )
                         ),
                         React.DOM.tbody({onDoubleClick: this._showEditor},
+                            this._renderSearch(),
                             this.state.data.map((row, rowidx) => 
                                 React.DOM.tr({key: rowidx},
                                     row.map((cell, idx) => {
@@ -389,6 +426,34 @@
                         )
                     )
                 )
+            },
+            _renderToolbar() {
+                return React.DOM.button(
+                    {
+                        className: 'toolbar',
+                        onClick: this._toggleSearch
+                    },
+                    'search'
+                )
+            },
+            _renderSearch: function() {
+                if (!this.state.search) return;
+                return React.DOM.tr({onChange: this._search},
+                    this.props.headers.map((_ignore, idx) => {
+                        return React.DOM.td({key: idx},
+                            React.DOM.input({
+                                type: 'text',
+                                'data-idx': idx
+                            })
+                        );
+                    })
+                );
+            },
+            render: function() {
+                return React.DOM.div(null,
+                    this._renderToolbar(),
+                    this._renderTable()
+                );
             }
         });
         
