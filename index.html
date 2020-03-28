@@ -23,6 +23,16 @@
         .toolbar {
             margin-bottom: 10px;
         }
+        .toolbar > button,
+        .toolbar > a {
+            display: inline-block;
+            text-decoration: none;
+            color: #333;
+            background: #EEE;
+            padding: .3em .5em;
+            font: 16px Arial;
+            margin-right: 1em;
+        }
     </style>
 </head>
 <body>
@@ -293,6 +303,7 @@
         var Excel = React.createClass({
             displayName: 'Excel', // apenas para depuração, verifique ao remover key do th
             _preSearchData: null,
+            _log: [],
             propTypes: {
                 headers: React.PropTypes.arrayOf(
                     React.PropTypes.string
@@ -302,6 +313,14 @@
                         React.PropTypes.string
                     )
                 )
+            },
+            _logSetState: function(newState) {
+                // guarda o estado antigo em um clone
+                this._log.push(JSON.parse(JSON.stringify(
+                    this._log.length === 0 ? this.state : newState
+                )));
+
+                this.setState(newState);
             },
             getInitialState: function() {
                 return {
@@ -323,15 +342,15 @@
                     if (a[column] == b[column]) return 0;
                     return a[column] > b[column] ? 1 : -1
                 });
-                
-                this.setState({
+
+                this._logSetState({
                     data: data,
                     sortby: column,
                     descending: descending
                 });
             },
             _showEditor: function(ev) {
-                this.setState({
+                this._logSetState({
                     edit: {
                         row: parseInt(ev.target.dataset.row, 10),
                         cell: ev.target.cellIndex
@@ -346,20 +365,20 @@
                 let row = this.state.edit.row, cell = this.state.edit.cell;
                 data[row][cell] = input.value;
 
-                this.setState({
+                this._logSetState({
                     edit: null, // edição finalizada
                     data: data
                 });
             },
             _toggleSearch: function(ev) {
                 if (this.state.search) {
-                    this.setState({
+                    this._logSetState({
                         data: this._preSearchData,
                         search: false
                     });
                 } else {
                     this._preSearchData = this.state.data;
-                    this.setState({
+                    this._logSetState({
                         search: true
                     });
                 }
@@ -367,7 +386,7 @@
             _search: function(ev) {
                 let needle = ev.target.value.toLowerCase();
                 if (!needle) {
-                    this.setState({
+                    this._logSetState({
                         data: this._preSearchData
                     });
                     return;
@@ -378,9 +397,44 @@
                     return row[idx].toString().toLowerCase().indexOf(needle) > -1;
                 });
 
-                this.setState({
+                this._logSetState({
                     data: searchData
                 });
+            },
+            _replay: function() {
+                if (this._log.length == 0) {
+                    console.warn('No state to replay yet');
+                    return;
+                }
+
+                let idx = -1;
+                let interval = setInterval(function() {
+                    idx ++;
+                    if (idx === this._log.length - 1) { // fim
+                        clearInterval(interval);
+                    }
+                    this.setState(this._log[idx]);
+                }.bind(this), 1000);
+            },
+            _download: function(format, ev) {
+                let contents = format == 'json'
+                ? JSON.stringify(this.state.data)
+                : this.state.data.reduce((result, row) => {
+                    return result
+                        + row.reduce((rowresult, cell, idx) => {
+                            return rowresult
+                                + '"'
+                                + cell.replace(/"/g, '""')
+                                + '"'
+                                + (idx < row.length - 1 ? ';' : '')
+                        }, '')
+                        + "\n";
+                }, '');
+
+                let URL = window.URL || window.webkitURL;
+                let blob = new Blob([contents], {type: 'text/' + format});
+                ev.target.href = URL.createObjectURL(blob);
+                ev.target.download = 'data.' + format;
             },
             _renderTable() {
                 return (
@@ -428,13 +482,28 @@
                 )
             },
             _renderToolbar() {
-                return React.DOM.button(
-                    {
-                        className: 'toolbar',
-                        onClick: this._toggleSearch
-                    },
-                    'search'
-                )
+                return React.DOM.div({className: 'toolbar',},
+                    React.DOM.button(
+                        {
+                            onClick: this._toggleSearch
+                        },
+                        'search'
+                    ),
+                    React.DOM.a(
+                        {
+                            onClick: this._download.bind(this, 'json'),
+                            href: 'data.json'
+                        },
+                        'Export Json'
+                    ),
+                    React.DOM.a(
+                        {
+                            onClick: this._download.bind(this, 'csv'),
+                            href: 'data.csv'
+                        },
+                        'Export CSV'
+                    )
+                );
             },
             _renderSearch: function() {
                 if (!this.state.search) return;
@@ -454,6 +523,13 @@
                     this._renderToolbar(),
                     this._renderTable()
                 );
+            },
+            componentDidMount: function() {
+                document.onkeydown = function(ev) {
+                    if (ev.altKey && ev.shiftKey && ev.keyCode == 82) { // ALT + SHIFT + R(eplay)
+                        this._replay();
+                    }
+                }.bind(this);
             }
         });
         
