@@ -158,12 +158,18 @@ var Excel = React.createClass({
             <table>
                 <thead onClick={this._sort}>
                     <tr>
-                        {this.props.headers.map((title, idx) => {
-                            if (this.state.sortby === idx) {
-                                title += this.state.descending ? ' \u2191' : ' \u2193';
-                            }
-                            return <th key={idx}>{title}</th>
-                        })}
+                        {this.props.headers.map((title, idx) => 
+                            <th key={idx}>
+                                {title}
+                                {
+                                    this.state.sortby === idx
+                                    ? this.state.descending
+                                        ? ' \u2191'
+                                        : ' \u2193'
+                                    : null
+                                }
+                            </th>
+                        )}
                     </tr>
                 </thead>
                 <tbody onDoubleClick={this._showEditor}>
