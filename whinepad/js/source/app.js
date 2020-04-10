@@ -1,17 +1,14 @@
-'use strict';
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Logo from './components/Logo';
-import Excel from './components/Excel';
+import {Logo} from './components/Logo';
+import {Excel} from './components/Excel';
+import {Button} from './components/Button';
 
 let headers = localStorage.getItem('headers');
 let data = localStorage.getItem('data');
 
-// if (!headers) {
+if (!headers) {
     headers = ['Title', 'Years', 'Rating', 'Comments'];
     data = [['Test', '2015', '3', 'meh']];
-// }
+}
 
 ReactDOM.render(
     <div>
@@ -19,6 +16,7 @@ ReactDOM.render(
             <Logo /> Welcome to the App!
         </h1>
         <Excel headers={headers} initialData={data} />
+        <Button onClick={() => alert('ok')}>Exemplo</Button>
     </div>,
     document.getElementById('app')
 );

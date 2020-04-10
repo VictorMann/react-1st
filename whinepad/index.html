@@ -10,6 +10,14 @@
     <div id="app">
         <!-- minha aplicação é renderizada aqui -->
     </div>
-    <script src="bundle.js"></script>
+    <script src="js/libs/react/build/react.min.js"></script>
+    <script src="js/libs/react/build/react-dom.min.js"></script>
+    <script src="node_modules/systemjs/dist/system.js"></script>
+    <script>
+        System.defaultJSExtensions = true; // permite omitir a extensão .js dos imports
+        System.import('js/build/app').catch(function(err){
+            console.error(err);
+        });
+    </script>
 </body>
 </html>

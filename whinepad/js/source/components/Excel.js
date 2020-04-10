@@ -1,19 +1,16 @@
-import React from 'react';
-
-
-var Excel = React.createClass({
+export var Excel = React.createClass({
     displayName: 'Excel', // apenas para depuração, verifique ao remover key do th
     _preSearchData: null,
     _log: [],
     propTypes: {
-        // headers: React.PropTypes.arrayOf(
-        //     React.PropTypes.string
-        // ),
-        // initialData: React.PropTypes.arrayOf(
-        //     React.PropTypes.arrayOf(
-        //         React.PropTypes.string
-        //     )
-        // )
+        headers: React.PropTypes.arrayOf(
+            React.PropTypes.string
+        ),
+        initialData: React.PropTypes.arrayOf(
+            React.PropTypes.arrayOf(
+                React.PropTypes.string
+            )
+        )
     },
     _logSetState: function(newState) {
         // guarda o estado antigo em um clone
@@ -221,5 +218,3 @@ var Excel = React.createClass({
         }.bind(this);
     }
 });
-
-export default Excel
