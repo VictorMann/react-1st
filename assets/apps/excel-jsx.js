@@ -221,9 +221,12 @@ var Excel = React.createClass({
         );
     },
     render: function() {
-        return React.DOM.div(null,
-            this._renderToolbar(),
-            this._renderTable()
+
+        return (
+            <div>
+                {this._renderToolbar()}
+                {this._renderTable()}
+            </div>
         );
     },
     componentDidMount: function() {
