@@ -1,0 +1,28 @@
+.Excel table {
+    border-collapse: collapse;
+    border: 1px solid #555;
+}
+.Excel thead {
+    background: #333;
+    color: white;
+}
+.Excel th,
+.Excel td {
+    padding: .3em .5em;
+}
+.Excel tbody tr:nth-child(odd) {
+    background: #EEE;
+}
+.Excel .toolbar {
+    margin-bottom: 10px;
+}
+.Excel .toolbar > button,
+.Excel .toolbar > a {
+    display: inline-block;
+    text-decoration: none;
+    color: #333;
+    background: #EEE;
+    padding: .3em .5em;
+    font: 16px Arial;
+    margin-right: 1em;
+}
