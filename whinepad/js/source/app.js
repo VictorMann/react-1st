@@ -2,6 +2,7 @@ import {Logo} from './components/Logo';
 import {Excel} from './components/Excel';
 import {Button} from './components/Button';
 import {Rating} from './components/Rating';
+import {Actions} from './components/Actions';
 
 let headers = localStorage.getItem('headers');
 let data = localStorage.getItem('data');
@@ -19,6 +20,7 @@ ReactDOM.render(
         <Excel headers={headers} initialData={data} />
         <Button onClick={() => alert('ok')}>Exemplo</Button>
         <Rating />
+        <Actions />
     </div>,
     document.getElementById('app')
 );
